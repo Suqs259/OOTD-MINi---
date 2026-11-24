@@ -1,0 +1,14 @@
+<template name="tab-bar">
+  <view class="tab-bar">
+    <view wx:if="{{active === 'weather'}}" class="tab tab-active" aria-label="OOTD，当前页面"><text class="tab-icon">👕</text><text>OOTD</text></view>
+    <view wx:elif="{{locked}}" class="tab" aria-label="完成设置后进入 OOTD">
+      <view class="tab-icon"><image class="tab-line-icon" src="/pages/profile/icons/shirt.svg" mode="aspectFit" aria-hidden="true" /></view><text>OOTD</text>
+    </view>
+    <navigator wx:else class="tab" open-type="redirect" url="/pages/index/index"><text class="tab-icon">👕</text><text>OOTD</text></navigator>
+    <view wx:if="{{active === 'profile'}}" class="tab tab-active" aria-label="我的，当前页面">
+      <view wx:if="{{lineIcons}}" class="tab-icon"><image class="tab-line-icon" src="/pages/profile/icons/person.svg" mode="aspectFit" aria-hidden="true" /></view>
+      <text wx:else class="tab-icon">👤</text><text>我的</text>
+    </view>
+    <navigator wx:else class="tab" open-type="redirect" url="/pages/profile/profile"><text class="tab-icon">👤</text><text>我的</text></navigator>
+  </view>
+</template>

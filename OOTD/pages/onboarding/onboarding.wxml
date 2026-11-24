@@ -1,0 +1,14 @@
+<import src="../../templates/tab-bar.wxml" />
+<import src="../../templates/profile-form.wxml" />
+
+<view class="app-shell">
+  <template is="profile-header" data="{{statusBarHeight, headerHeight}}" />
+
+  <scroll-view class="app-scroll" scroll-y>
+    <view class="profile-content">
+      <template is="profile-form" data="{{form, submitting}}" />
+    </view>
+  </scroll-view>
+
+  <template is="tab-bar" data="{{active: 'profile', locked: true, lineIcons: true}}" />
+</view>

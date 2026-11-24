@@ -1,0 +1,21 @@
+[     143ms] [LOG] sw reg success @ https://www.wolai.com/pEmFL4yGCHwT9XQ6Lmne3u:1
+[     532ms] [LOG] %c
+                    .__         .__
+      __  _  ______ |  | _____  |__|
+      \ \/ \/ /  _ \|  | \__  \ |  |
+       \     (  <_> )  |__/ __ \|  |
+        \/\_/ \____/|____(____  /__|
+                              \/
+      %cwolai 正在招聘前端全栈工程师，详见 https://www.wolai.com/o1Ta6X5uQTiis8uhKUgzWR
+     color:#cf5659 color: blank @ https://cdn.wostatic.cn/dist/javascript/app.9a775232.js:1
+[     822ms] [LOG] %c [APLUS] -- APLUS INIT SUCCESS background:#3B82FE; padding: 4px; padding-right: 8px; border-radius: 4px; color: #fff; @ :2
+[     929ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_CLOSED @ https://log.mmstat.com/eg.js:1
+[     930ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_CLOSED @ https://log.mmstat.com/v.gif:1
+[    1845ms] [WARNING] FMP @ https://cdn.wostatic.cn/dist/javascript/commons_339eb5becf69.73cfcb87.js:1
+[    2102ms] [ERROR] Permissions policy violation: unload is not allowed in this document. @ https://g.alicdn.com/AWSC/et/1.83.41/et_f.js:2
+[    2104ms] [LOG] Sun Nov 22 2026 22:58:26 GMT+0800 (中国标准时间) @ https://g.alicdn.com/AWSC/et/1.83.41/et_f.js:2
+[    4233ms] [INFO] Slow network is detected. See https://www.chromestatus.com/feature/5636954674692096 for more details. Fallback font will be used while loading: https://cdn.wostatic.cn/fonts/JetBrainsMono-Regular.woff @ https://cdn.wostatic.cn/dist/javascript/commons_10a53e57e5b7.362bb9ba.js:2
+[    4238ms] [INFO] Slow network is detected. See https://www.chromestatus.com/feature/5636954674692096 for more details. Fallback font will be used while loading: https://cdn.wostatic.cn/fonts/JetBrainsMono-Regular.woff @ https://www.wolai.com/pEmFL4yGCHwT9XQ6Lmne3u:1
+[    4248ms] [INFO] Slow network is detected. See https://www.chromestatus.com/feature/5636954674692096 for more details. Fallback font will be used while loading: https://cdn.wostatic.cn/fonts/JetBrainsMono-Regular.woff @ https://cdn.wostatic.cn/dist/javascript/2772.3c57b433.js:1
+[   20720ms] [INFO] WolaiNative start init @ https://cdn.wostatic.cn/dist/javascript/app.9a775232.js:1
+[   20721ms] [INFO] WolaiNative init success @ https://cdn.wostatic.cn/dist/javascript/app.9a775232.js:1

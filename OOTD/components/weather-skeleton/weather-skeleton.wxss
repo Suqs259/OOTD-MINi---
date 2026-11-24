@@ -1,0 +1,46 @@
+.skeleton-panel {
+  box-sizing: border-box;
+  border: 1px solid rgba(189, 167, 255, .19);
+  border-radius: 42rpx;
+  background: linear-gradient(150deg, #39305e, #261f43 72%);
+}
+
+.skeleton-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 26rpx 32rpx;
+  background: radial-gradient(ellipse at 78% 34%, rgba(147, 104, 231, .55), transparent 55%),
+    linear-gradient(135deg, #4d358d, #302655 78%);
+}
+.placeholder {
+  border-radius: 12rpx;
+  background: linear-gradient(100deg, rgba(215, 196, 255, .12) 25%, rgba(236, 224, 255, .31) 50%, rgba(215, 196, 255, .12) 75%);
+  background-size: 220% 100%;
+  animation: shimmer 1.55s ease-in-out infinite;
+}
+@keyframes shimmer { from { background-position: 140% 0; } to { background-position: -90% 0; } }
+
+.title { width: 130rpx; height: 29rpx; }
+.city { width: 96rpx; height: 22rpx; margin-top: 18rpx; }
+.temperature { width: 178rpx; height: 88rpx; margin-top: 14rpx; border-radius: 18rpx; }
+.condition { width: 100rpx; height: 26rpx; margin-top: 14rpx; }
+.range { width: 214rpx; height: 20rpx; margin-top: 13rpx; }
+.weather-icon { position: absolute; top: 81rpx; right: 55rpx; width: 164rpx; height: 148rpx; border-radius: 52rpx; }
+.metrics { display: flex; margin-top: 22rpx; padding-top: 19rpx; border-top: 1px solid rgba(255, 255, 255, .2); }
+.metric { display: flex; flex: 1; flex-direction: column; gap: 10rpx; padding-left: 16rpx; }
+.metric:first-child { padding-left: 0; }
+.metric + .metric { border-left: 1px solid rgba(255, 255, 255, .2); }
+.metric-label { width: 76rpx; height: 20rpx; }
+.metric-value { width: 92rpx; height: 24rpx; }
+
+.skeleton-forecast { margin-top: 20rpx; padding: 22rpx 26rpx; }
+.skeleton-forecast .title { width: 184rpx; }
+.forecast-list { display: flex; gap: 7rpx; margin-top: 15rpx; }
+.forecast-day { display: flex; flex: 1; min-width: 0; flex-direction: column; align-items: center; gap: 8rpx; padding: 13rpx 0; border-radius: 23rpx; background: rgba(23, 17, 42, .25); }
+.day-label { width: 43rpx; height: 20rpx; }
+.day-icon { width: 33rpx; height: 33rpx; border-radius: 50%; }
+.day-temperature { width: 35rpx; height: 18rpx; }
+
+@media (prefers-reduced-motion: reduce) {
+  .placeholder { animation: none; }
+}

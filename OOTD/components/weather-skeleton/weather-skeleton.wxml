@@ -1,0 +1,29 @@
+<view aria-label="正在加载今日天气和近七日预报">
+  <view class="skeleton-panel skeleton-hero" aria-hidden="true">
+    <view class="placeholder title"></view>
+    <view class="placeholder city"></view>
+    <view class="placeholder temperature"></view>
+    <view class="placeholder condition"></view>
+    <view class="placeholder range"></view>
+    <view class="placeholder weather-icon"></view>
+
+    <view class="metrics">
+      <view class="metric" wx:for="{{metricSlots}}" wx:key="*this">
+        <view class="placeholder metric-label"></view>
+        <view class="placeholder metric-value"></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="skeleton-panel skeleton-forecast" aria-hidden="true">
+    <view class="placeholder title"></view>
+    <view class="forecast-list">
+      <view class="forecast-day" wx:for="{{forecastSlots}}" wx:key="*this">
+        <view class="placeholder day-label"></view>
+        <view class="placeholder day-icon"></view>
+        <view class="placeholder day-temperature"></view>
+        <view class="placeholder day-temperature"></view>
+      </view>
+    </view>
+  </view>
+</view>

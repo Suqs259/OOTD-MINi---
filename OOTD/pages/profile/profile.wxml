@@ -1,0 +1,47 @@
+<import src="../../templates/tab-bar.wxml" />
+<import src="../../templates/profile-form.wxml" />
+
+<template name="profile-detail">
+  <view class="profile-row">
+    <view class="profile-icon"><image src="/pages/profile/icons/{{icon}}.svg" mode="aspectFit" aria-hidden="true" /></view>
+    <view class="profile-value"><view class="profile-label">{{label}}</view><text>{{value}}</text></view>
+  </view>
+</template>
+
+<view class="app-shell">
+  <template is="profile-header" data="{{statusBarHeight, headerHeight}}" />
+
+  <scroll-view class="app-scroll" scroll-y wx:if="{{profile}}">
+    <view class="profile-content">
+      <block wx:if="{{editing}}">
+        <template is="profile-form" data="{{form, editing}}" />
+      </block>
+
+      <block wx:else>
+        <view class="panel profile-banner profile-hero">
+          <view class="profile-orbit" aria-hidden="true"></view>
+          <view class="banner-icon"><image src="./icons/user.svg" mode="aspectFit" aria-hidden="true" /></view>
+          <text class="profile-title">我的穿搭档案</text>
+        </view>
+        <view class="panel profile-panel">
+          <view class="between">
+            <text class="profile-panel-title">个人资料</text>
+            <view class="option profile-edit" bindtap="editProfile" aria-role="button">
+              <image src="./icons/edit.svg" mode="aspectFit" aria-hidden="true" /><text>编辑</text>
+            </view>
+          </view>
+          <view class="profile-details">
+            <template is="profile-detail" data="{{icon: 'location', label: '城市', value: profile.city}}" />
+            <template is="profile-detail" data="{{icon: 'person', label: '性别', value: profile.gender === 'male' ? '男生' : '女生'}}" />
+            <template is="profile-detail" data="{{icon: 'description', label: '个人描述', value: profile.description}}" />
+          </view>
+        </view>
+        <navigator class="primary profile-action profile-cta" open-type="redirect" url="/pages/index/index" hover-class="primary-pressed" hover-start-time="0" hover-stay-time="0">
+          <image src="./icons/shirt.svg" mode="aspectFit" aria-hidden="true" /><text>去选今日穿搭</text>
+        </navigator>
+      </block>
+    </view>
+  </scroll-view>
+
+  <template is="tab-bar" data="{{active: 'profile'}}" />
+</view>

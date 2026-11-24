@@ -15,17 +15,38 @@
 | 今日天气 | 查看当前气温、天气状况、最高与最低气温、湿度、风速和降水概率。 |
 | 近 7 日天气 | 在小程序中点选日期，上方卡片显示当天的天气和气温区间。点「今天」切回当前天气。 |
 | 今日穿搭 | 根据资料中的性别提供对应的 10 种风格。选定风格后，推荐弹层会展示结合今日天气和个人偏好的搭配建议，以及三张可切换的参考照片。 |
-| 我的 | 首次使用时引导填写城市、性别和个人描述。资料保存在本地，之后可以修改。 |
+| 首次设置与我的 | 首页在资料缺失时自动打开引导。城市、性别和个人描述保存在本地，可在「我的」查看和修改。 |
 
-天气使用内置城市示例，未收录的城市会显示标注为示例的上海数据。穿搭建议由本地规则生成，图片采用图库照片。运行当前版本无需天气或 AI 服务密钥。
+小程序通过 Express 后端读取 Coze 工作流的天气数据，网页原型使用内置示例。穿搭建议由本地规则生成，图片采用图库照片。
 
 ## 本地运行
+
+### 天气后端
+
+在仓库根目录使用 Node.js 22 或更新版本运行以下命令：
+
+```powershell
+cd server
+npm ci
+Copy-Item .env.example .env
+```
+
+在 `server/.env` 填写 `COZE_TOKEN` 和已发布工作流的 `COZE_WORKFLOW_ID`。城市入参默认为 `city`，可以通过 `COZE_CITY_PARAMETER` 修改。然后在 `server/` 运行 `npm start`，默认监听 `127.0.0.1:3000`。
+
+接口为 `GET /api/weather?city=深圳`，后端调用[扣子执行工作流 API](https://docs.coze.cn/developer_guides_workflow_run)。当前适配器将结果解析为以下字段：
+
+| 工作流输出 | 字段 |
+| --- | --- |
+| 根对象 | `city`（可选）、`current`、`days`（也可用 `forecast`）。可放在结束节点的 `output` 字段下。 |
+| `current` | `temperature`（或 `temp`，摄氏度）、`condition`。可选字段为 `humidity`（%）、`windSpeed`（km/h）、`precipitationProbability`（%）。 |
+| `days` | 从当天起至少七个连续日期，每项包含 `date`（YYYY-MM-DD）、`high`、`low`（摄氏度）和 `condition`（天气描述）。 |
 
 ### 微信小程序
 
 1. 打开微信开发者工具，选择「导入项目」。
 2. 项目目录选择仓库中的 `OOTD/`。如需真机预览，使用你有权限的 AppID。
-3. 点击「编译」进入首页。首次体验时，先在「我的」保存资料，再回到「OOTD」选择风格。
+3. 启动天气后端，再点击「编译」。本地模拟器可开启「不校验合法域名」访问本机接口。真机联调时，将 [API 地址](OOTD/config/api.js) 改为已配置的小程序 HTTPS 请求域名。
+4. 首次进入时完成引导，保存后会进入「我的」。点击「去选今日穿搭」返回 OOTD，此时会用已保存的城市加载天气。
 
 小程序使用原生 WXML、WXSS 和 JavaScript，无需安装 npm 依赖。
 
@@ -46,9 +67,13 @@ python -m http.server 8765 --bind 127.0.0.1 --directory prototype
 ├── OOTD/                       微信小程序
 │   ├── app.json                 页面注册和全局配置
 │   ├── project.config.json      微信开发者工具项目配置
+│   ├── components/ootd-popup/   穿搭推荐弹层与轮播
 │   └── pages/
-│       ├── index/               OOTD、我的、推荐弹层及本地照片
+│       ├── index/               OOTD 首页及本地照片
+│       ├── onboarding/          首次进入或资料缺失时的引导
+│       ├── profile/             我的和资料编辑
 │       └── logs/                小程序启动日志
+├── server/                      Express 天气接口和 Coze 适配器
 └── prototype/                   网页交互原型
     ├── index.html               iframe 原型总览
     ├── weather.html             天气与风格选择
@@ -58,4 +83,4 @@ python -m http.server 8765 --bind 127.0.0.1 --directory prototype
     └── README.md                交互说明、开发交接和素材来源
 ```
 
-小程序的天气示例和搭配规则分别由 [`forecast()` 和 `outfitAdvice()`](OOTD/pages/index/index.js) 提供。原型的交互路径、接口接入点和素材署名见 [原型与开发交接文档](prototype/README.md)。
+Coze 的天气数据由 [服务端适配器](server/weather.js) 统一整理。小程序的本地搭配规则由 [`outfitAdvice()`](OOTD/pages/index/index.js) 提供。原型的交互路径和素材署名见 [原型与开发交接文档](prototype/README.md)。

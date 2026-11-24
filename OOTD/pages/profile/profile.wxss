@@ -1,0 +1,35 @@
+@import "../../styles/page.wxss";
+@import "../../styles/profile-form.wxss";
+
+.profile-hero {
+  box-sizing: border-box;
+  display: flex;
+  min-height: 314rpx;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20rpx;
+  padding: 34rpx;
+}
+.profile-panel-title { font-size: 31rpx; font-weight: 600; }
+.profile-edit { box-sizing: border-box; min-height: 75rpx; gap: 14rpx; padding: 0 20rpx; font-size: 24rpx; }
+.profile-edit image { width: 27rpx; height: 27rpx; }
+.profile-details { margin-top: 14rpx; }
+.profile-row { display: flex; align-items: flex-start; gap: 20rpx; padding: 29rpx 0; }
+.profile-row + .profile-row { border-top: 1px solid rgba(196, 181, 253, .2); }
+.profile-icon {
+  box-sizing: border-box;
+  display: flex;
+  width: 61rpx;
+  height: 61rpx;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(189, 167, 255, .19);
+  border-radius: 20rpx;
+  background: rgba(161, 110, 255, .15);
+}
+.profile-icon image { width: 31rpx; height: 31rpx; }
+.profile-value { min-width: 0; font-size: 27rpx; line-height: 1.625; word-wrap: break-word; white-space: pre-wrap; }
+.profile-label { margin-bottom: 7rpx; color: rgba(221, 214, 254, .8); font-size: 24rpx; line-height: 1.4; }
+.profile-cta { margin-top: 34rpx; }

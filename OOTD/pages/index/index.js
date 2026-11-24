@@ -1,4 +1,5 @@
-const PROFILE_KEY = 'ootd-mini-profile-v1';
+const { readProfile } = require('../../utils/profile');
+const { weatherUrl } = require('../../config/api');
 
 const styles = {
   male: ['运动休闲风', '商务精英风', '日系潮流风', '韩系简约风', '学院风', '街头嘻哈风', '户外机能风', '复古文艺风', '极简主义风', '工装风'],
@@ -32,47 +33,6 @@ const photos = {
   lounge: '浅灰连帽休闲套装',
   trendy: '彩色街头叠搭',
 };
-const conditions = {
-  partly: { label: '晴间多云', emoji: '🌤️' },
-  sun: { label: '晴', emoji: '☀️' },
-  cloud: { label: '多云', emoji: '☁️' },
-  rain: { label: '小雨', emoji: '🌧️' },
-};
-const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-const cityWeather = {
-  上海: [23, 25, 18, 'partly', 64, 9, 20],
-  北京: [14, 16, 7, 'sun', 38, 16, 10],
-  广州: [28, 30, 23, 'rain', 82, 11, 85],
-  深圳: [27, 29, 23, 'rain', 78, 13, 80],
-  成都: [19, 21, 15, 'cloud', 75, 7, 35],
-  杭州: [21, 23, 16, 'partly', 67, 8, 25],
-  哈尔滨: [0, 3, -5, 'cloud', 52, 13, 10],
-};
-
-function forecast(city) {
-  const name = (city || '').replace(/市$/, '');
-  const sampleCity = Object.prototype.hasOwnProperty.call(cityWeather, name) ? name : '上海';
-  const [now, high, low, condition, humidity, wind, rain] = cityWeather[sampleCity];
-  const days = [
-    [condition, high, low], ['sun', high + 2, low + 1], ['partly', high + 1, low],
-    ['rain', high - 2, low - 1], ['rain', high - 4, low - 2], ['cloud', high - 3, low - 2], ['sun', high - 1, low - 1],
-  ];
-  const today = new Date();
-  return {
-    now, high, low, humidity, wind, rain, sampleCity,
-    cityLabel: sampleCity === name ? city : sampleCity + ' · 示例城市',
-    days: days.map(([code, max, min], index) => {
-      const date = new Date(today);
-      date.setDate(date.getDate() + index);
-      return {
-        day: index ? weekdays[date.getDay()] : '今天',
-        date: (date.getMonth() + 1) + '月' + date.getDate() + '日',
-        high: max, low: min, ...conditions[code],
-      };
-    }),
-  };
-}
-
 function outfitAdvice(settings, weather, style) {
   const [pieces, shoes, malePhotos, femalePhotos] = looks[style];
   let layers = '备一件轻外套，早晚可叠穿。';
@@ -93,90 +53,71 @@ function outfitAdvice(settings, weather, style) {
 
 Page({
   data: {
-    tab: 'weather',
     profile: null,
-    editing: false,
-    form: { city: '', gender: '', description: '' },
-    weather: forecast(''),
+    onboardingRedirectFailed: false,
+    weather: null,
+    weatherStatus: 'idle',
+    weatherError: '',
     forecastIndex: 0,
     styles: [],
     selectedStyle: '',
     result: null,
-    slideIndex: 0,
   },
 
   onLoad() {
-    const stored = wx.getStorageSync(PROFILE_KEY);
-    const profile = stored && (stored.gender === 'male' || stored.gender === 'female') && typeof stored.city === 'string'
-      && typeof stored.description === 'string' ? stored : null;
-    this.applyProfile(profile);
     wx.setNavigationBarColor({ frontColor: '#ffffff', backgroundColor: '#241a3d' });
     wx.setNavigationBarTitle({ title: 'OOTD' });
-  },
-
-  applyProfile(profile) {
-    this.setData({
-      profile,
-      weather: forecast(profile ? profile.city : ''),
-      forecastIndex: 0,
-      styles: profile ? styles[profile.gender] : [],
-      selectedStyle: '',
-    });
-  },
-
-  switchTab(event) {
-    this.showTab(event.currentTarget.dataset.tab);
-  },
-
-  showTab(tab) {
-    if (tab === this.data.tab) return;
-    this.setData({ tab, result: null });
-    wx.setNavigationBarTitle({ title: tab === 'weather' ? 'OOTD' : '我的' });
-  },
-
-  openProfileForm() {
-    const { profile } = this.data;
-    this.setData({
-      editing: true,
-      form: profile ? { ...profile } : { city: '', gender: '', description: '' },
-    });
-    this.showTab('profile');
-  },
-
-  cancelEdit() {
-    this.setData({ editing: false });
-  },
-
-  updateField(event) {
-    const field = event.currentTarget.dataset.field;
-    this.setData({ ['form.' + field]: event.detail.value });
-  },
-
-  chooseGender(event) {
-    this.setData({ 'form.gender': event.currentTarget.dataset.gender });
-  },
-
-  saveProfile() {
-    const { city, gender, description } = this.data.form;
-    const profile = { city: city.trim(), gender, description: description.trim() };
-    const missing = !profile.city ? '请输入城市' : !gender ? '请选择性别' : !profile.description ? '请输入个人描述' : '';
-    if (missing) {
-      wx.showToast({ title: missing, icon: 'none' });
+    const profile = readProfile();
+    if (!profile) {
+      wx.redirectTo({
+        url: '/pages/onboarding/onboarding',
+        fail: () => this.setData({ onboardingRedirectFailed: true }),
+      });
       return;
     }
-    try {
-      wx.setStorageSync(PROFILE_KEY, profile);
-    } catch {
-      wx.showToast({ title: '保存失败，请重试', icon: 'none' });
-      return;
-    }
-    this.applyProfile(profile);
-    this.setData({ editing: false });
+    this.setData({ profile, styles: styles[profile.gender] });
+    this.loadWeather();
+  },
+
+  onUnload() {
+    this.weatherRequestId = (this.weatherRequestId || 0) + 1;
+    if (this.weatherRequest) this.weatherRequest.abort();
+  },
+
+  loadWeather() {
+    const { profile, weatherStatus } = this.data;
+    if (!profile || weatherStatus === 'loading') return;
+    const requestId = (this.weatherRequestId || 0) + 1;
+    this.weatherRequestId = requestId;
+    this.setData({ weatherStatus: 'loading', weatherError: '' });
+
+    const showError = (message) => {
+      if (requestId !== this.weatherRequestId) return;
+      this.setData({ weatherStatus: 'error', weatherError: message });
+    };
+
+    this.weatherRequest = wx.request({
+      url: weatherUrl,
+      data: { city: profile.city },
+      timeout: 18000,
+      success: ({ statusCode, data }) => {
+        if (requestId !== this.weatherRequestId) return;
+        if (statusCode !== 200 || !Array.isArray(data?.days) || data.days.length !== 7) {
+          showError(data?.message || '天气数据暂时不可用');
+          return;
+        }
+        this.setData({ weather: data, weatherStatus: 'ready', forecastIndex: 0 });
+      },
+      fail: () => showError('天气加载失败，请检查网络后重试'),
+      complete: () => {
+        if (requestId === this.weatherRequestId) this.weatherRequest = null;
+      },
+    });
   },
 
   selectForecastDay(event) {
     const index = Number(event.currentTarget.dataset.index);
-    if (Number.isInteger(index) && this.data.weather.days[index] && index !== this.data.forecastIndex) {
+    if (Number.isInteger(index) && this.data.weather?.days[index] && index !== this.data.forecastIndex) {
       this.setData({ forecastIndex: index });
     }
   },
@@ -187,25 +128,16 @@ Page({
 
   generateOutfit() {
     const { profile, weather, selectedStyle } = this.data;
-    if (!profile || !selectedStyle) return;
-    this.setData({ result: outfitAdvice(profile, weather, selectedStyle), slideIndex: 0 });
+    if (!profile || !weather || !selectedStyle) return;
+    this.setData({
+      result: {
+        ...outfitAdvice(profile, weather, selectedStyle),
+        subtitle: selectedStyle + ' · ' + weather.city + ' · ' + weather.low + '–' + weather.high + '°C',
+      },
+    });
   },
 
   closeResult() {
     this.setData({ result: null });
-  },
-
-  updateSlide(event) {
-    this.setData({ slideIndex: event.detail.current });
-  },
-
-  selectSlide(event) {
-    this.setData({ slideIndex: event.currentTarget.dataset.slide });
-  },
-
-  stepSlide(event) {
-    const count = this.data.result.images.length;
-    const step = Number(event.currentTarget.dataset.step);
-    this.setData({ slideIndex: (this.data.slideIndex + step + count) % count });
   },
 });

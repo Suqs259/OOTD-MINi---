@@ -1,6 +1,8 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/onboarding/onboarding",
+    "pages/profile/profile",
     "pages/logs/logs"
   ],
   "window": {

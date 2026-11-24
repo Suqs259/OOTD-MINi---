@@ -1,0 +1,44 @@
+<view class="popup">
+  <view class="backdrop" bindtap="close" catchtouchmove="preventBackgroundScroll" aria-hidden="true"></view>
+  <view class="sheet" aria-role="dialog" aria-label="今日穿搭推荐">
+    <view class="sheet-handle" aria-hidden="true"></view>
+    <view class="sheet-content">
+      <view class="between">
+        <view class="sheet-heading">
+          <view class="sheet-icon"><image class="brand-glyph" src="./icons/sparkles.svg" mode="aspectFit" aria-hidden="true" /></view>
+          <view class="sheet-text">
+            <view class="sheet-title">今日穿搭推荐</view>
+            <view class="sheet-subtitle">{{result.subtitle}}</view>
+          </view>
+        </view>
+        <view class="round-button" bindtap="close" aria-role="button" aria-label="关闭推荐">
+          <image class="close-glyph" src="./icons/close.svg" mode="aspectFit" aria-hidden="true" />
+        </view>
+      </view>
+      <view class="advice">
+        <view class="between"><text class="section-title">AI 搭配建议</text><text class="muted">演示建议</text></view>
+        <view class="advice-text">{{result.text}}</view>
+      </view>
+      <view class="between inspiration"><text class="section-title">穿搭灵感</text><text class="muted">参考照片 · 左右滑动</text></view>
+      <swiper class="carousel" current="{{slideIndex}}" bindchange="updateSlide" circular>
+        <swiper-item wx:for="{{result.images}}" wx:key="key">
+          <image class="outfit-photo" src="{{item.src}}" mode="aspectFill" aria-label="{{item.caption}}" />
+          <view class="photo-caption">{{item.caption}}</view>
+        </swiper-item>
+      </swiper>
+      <view class="carousel-controls" wx:if="{{result.images.length > 1}}">
+        <view class="round-button carousel-prev" data-step="-1" bindtap="stepSlide" aria-role="button" aria-label="上一张">
+          <image class="arrow-glyph" src="./icons/previous.svg" mode="aspectFit" aria-hidden="true" />
+        </view>
+        <view class="slide-dots">
+          <view wx:for="{{result.images}}" wx:key="key" class="slide-target {{slideIndex === index ? 'slide-target-active' : ''}}" data-slide="{{index}}" bindtap="selectSlide" aria-role="button" aria-pressed="{{slideIndex === index}}" aria-label="第 {{index + 1}} 张">
+            <view class="dot"></view>
+          </view>
+        </view>
+        <view class="round-button carousel-next" data-step="1" bindtap="stepSlide" aria-role="button" aria-label="下一张">
+          <image class="arrow-glyph" src="./icons/next.svg" mode="aspectFit" aria-hidden="true" />
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

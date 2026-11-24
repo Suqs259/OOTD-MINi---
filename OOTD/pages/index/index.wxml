@@ -1,53 +1,62 @@
-<view class="app-shell">
-  <scroll-view class="app-scroll" scroll-y="{{!result}}" wx:if="{{tab === 'weather'}}">
-    <view class="content">
-      <view class="panel weather-hero">
-        <view class="between">
-          <text class="section-title">{{forecastIndex === 0 ? '今日天气' : weather.days[forecastIndex].day + '天气'}}</text>
-          <text class="sample-badge">演示数据</text>
-        </view>
-        <view class="weather-art" aria-hidden="true">
-          <text class="star star-one">✦</text>
-          <text class="star star-two">✧</text>
-          <text class="star star-three">·</text>
-          <text class="weather-emoji">{{weather.days[forecastIndex].emoji}}</text>
-        </view>
-        <view class="weather-summary">
-          <view class="city">📍 {{weather.cityLabel}}</view>
-          <view class="current"><text>{{forecastIndex === 0 ? weather.now : weather.days[forecastIndex].high}}</text><text class="degree">°</text></view>
-          <view class="condition">{{weather.days[forecastIndex].label}}</view>
-          <view class="range" wx:if="{{forecastIndex === 0}}">
-            <text>最低 {{weather.low}}°</text>
-            <view class="temperature-track"></view>
-            <text>最高 {{weather.high}}°</text>
-          </view>
-          <view class="range" wx:else>预计最高气温</view>
-        </view>
-        <view class="metrics" wx:if="{{forecastIndex === 0}}">
-          <view class="metric"><text class="metric-label">💧 湿度</text><text>{{weather.humidity}}%</text></view>
-          <view class="metric"><text class="metric-label">💨 风速</text><text>{{weather.wind}} km/h</text></view>
-          <view class="metric"><text class="metric-label">☔ 降水概率</text><text>{{weather.rain}}%</text></view>
-        </view>
-        <view class="metrics" wx:else>
-          <view class="metric"><text class="metric-label">📅 日期</text><text>{{weather.days[forecastIndex].date}}</text></view>
-          <view class="metric"><text class="metric-label">🌡️ 最低气温</text><text>{{weather.days[forecastIndex].low}}°</text></view>
-          <view class="metric"><text class="metric-label">🌡️ 最高气温</text><text>{{weather.days[forecastIndex].high}}°</text></view>
-        </view>
-      </view>
+<import src="../../templates/tab-bar.wxml" />
 
-      <view class="panel section">
-        <view class="between forecast-heading">
-          <text class="section-title">📅 近 7 日天气</text>
-          <text class="muted small">°C</text>
-        </view>
-        <view class="forecast-list">
-          <view wx:for="{{weather.days}}" wx:key="date" class="forecast-day {{index === forecastIndex ? 'forecast-selected' : ''}}" hover-class="forecast-pressed" hover-start-time="0" hover-stay-time="0" data-index="{{index}}" bindtap="selectForecastDay" aria-role="button" aria-pressed="{{index === forecastIndex}}" aria-label="{{item.day}}，{{item.label}}，最低{{item.low}}度，最高{{item.high}}度">
-            <text class="small">{{item.day}}</text>
-            <text class="forecast-emoji" aria-label="{{item.label}}">{{item.emoji}}</text>
-            <text class="forecast-high">{{item.high}}°</text>
-            <text class="muted small">{{item.low}}°</text>
+<view class="app-shell" wx:if="{{profile || onboardingRedirectFailed}}">
+  <scroll-view class="app-scroll" scroll-y="{{!result}}">
+    <view class="content">
+      <block wx:if="{{weather}}">
+        <view class="panel weather-hero">
+          <view class="between">
+            <text class="section-title">{{forecastIndex === 0 ? '今日天气' : weather.days[forecastIndex].day + '天气'}}</text>
+          </view>
+          <view class="weather-art" aria-hidden="true">
+            <text class="star star-one">✦</text>
+            <text class="star star-two">✧</text>
+            <text class="star star-three">·</text>
+            <text class="weather-emoji">{{forecastIndex === 0 ? weather.emoji : weather.days[forecastIndex].emoji}}</text>
+          </view>
+          <view class="weather-summary">
+            <view class="city">📍 {{weather.city}}</view>
+            <view class="current"><text>{{forecastIndex === 0 ? weather.now : weather.days[forecastIndex].high}}</text><text class="degree">°</text></view>
+            <view class="condition">{{forecastIndex === 0 ? weather.label : weather.days[forecastIndex].label}}</view>
+            <view class="range" wx:if="{{forecastIndex === 0}}">
+              <text>最低 {{weather.low}}°</text>
+              <view class="temperature-track"></view>
+              <text>最高 {{weather.high}}°</text>
+            </view>
+            <view class="range" wx:else>预计最高气温</view>
+          </view>
+          <view class="metrics" wx:if="{{forecastIndex === 0}}">
+            <view class="metric"><text class="metric-label">💧 湿度</text><text>{{weather.humidity === null ? '—' : weather.humidity + '%'}}</text></view>
+            <view class="metric"><text class="metric-label">💨 风速</text><text>{{weather.wind === null ? '—' : weather.wind + ' km/h'}}</text></view>
+            <view class="metric"><text class="metric-label">☔ 降水概率</text><text>{{weather.rain === null ? '—' : weather.rain + '%'}}</text></view>
+          </view>
+          <view class="metrics" wx:else>
+            <view class="metric"><text class="metric-label">📅 日期</text><text>{{weather.days[forecastIndex].dateLabel}}</text></view>
+            <view class="metric"><text class="metric-label">🌡️ 最低气温</text><text>{{weather.days[forecastIndex].low}}°</text></view>
+            <view class="metric"><text class="metric-label">🌡️ 最高气温</text><text>{{weather.days[forecastIndex].high}}°</text></view>
           </view>
         </view>
+
+        <view class="panel section">
+          <view class="between forecast-heading">
+            <text class="section-title">📅 近 7 日天气</text>
+            <text class="muted small">°C</text>
+          </view>
+          <view class="forecast-list">
+            <view wx:for="{{weather.days}}" wx:key="date" class="forecast-day {{index === forecastIndex ? 'forecast-selected' : ''}}" hover-class="forecast-pressed" hover-start-time="0" hover-stay-time="0" data-index="{{index}}" bindtap="selectForecastDay" aria-role="button" aria-pressed="{{index === forecastIndex}}" aria-label="{{item.day}}，{{item.label}}，最低{{item.low}}度，最高{{item.high}}度">
+              <text class="small">{{item.day}}</text>
+              <text class="forecast-emoji" aria-label="{{item.label}}">{{item.emoji}}</text>
+              <text class="forecast-high">{{item.high}}°</text>
+              <text class="muted small">{{item.low}}°</text>
+            </view>
+          </view>
+        </view>
+      </block>
+      <weather-skeleton wx:elif="{{weatherStatus === 'loading'}}" />
+      <view wx:elif="{{weatherStatus === 'error'}}" class="panel section weather-error">
+        <text class="section-title">天气加载失败</text>
+        <view class="hint">{{weatherError}}</view>
+        <view class="option weather-retry" bindtap="loadWeather" aria-role="button">重试</view>
       </view>
 
       <view class="panel section">
@@ -57,106 +66,17 @@
           <view class="style-grid">
             <button wx:for="{{styles}}" wx:key="*this" class="option {{selectedStyle === item ? 'option-selected' : ''}}" hover-class="none" aria-pressed="{{selectedStyle === item}}" data-style="{{item}}" bindtap="chooseStyle">{{item}}</button>
           </view>
-          <button class="primary {{selectedStyle ? '' : 'primary-disabled'}}" hover-class="{{selectedStyle ? 'primary-pressed' : 'none'}}" hover-start-time="0" hover-stay-time="0" disabled="{{!selectedStyle}}" bindtap="generateOutfit">✨ 生成今日OOTD</button>
+          <button class="primary {{selectedStyle && weather ? '' : 'primary-disabled'}}" hover-class="{{selectedStyle && weather ? 'primary-pressed' : 'none'}}" hover-start-time="0" hover-stay-time="0" disabled="{{!selectedStyle || !weather}}" bindtap="generateOutfit">✨ 生成今日OOTD</button>
         </block>
         <block wx:else>
           <view class="hint setup-hint">先设置城市、性别和个人描述，即可选择穿搭风格。</view>
-          <button class="primary" hover-class="primary-pressed" hover-start-time="0" hover-stay-time="0" bindtap="openProfileForm">👤 设置穿搭档案</button>
+          <navigator class="primary" hover-class="primary-pressed" hover-start-time="0" hover-stay-time="0" open-type="redirect" url="/pages/onboarding/onboarding">👤 设置穿搭档案</navigator>
         </block>
       </view>
     </view>
   </scroll-view>
 
-  <scroll-view class="app-scroll" scroll-y wx:else>
-    <view class="content">
-      <block wx:if="{{editing || !profile}}">
-        <view class="panel profile-banner setup-banner">
-          <view class="banner-copy">
-            <view class="profile-title">{{profile ? '编辑个人资料' : '建立你的穿搭档案'}}</view>
-            <view class="hint">天气按城市展示，穿搭会参考你的风格和日常需求。</view>
-          </view>
-          <view class="banner-icon">👕</view>
-        </view>
-        <view class="panel profile-panel">
-          <view class="field-group">
-            <text class="section-title">📍 城市</text>
-            <input class="field" value="{{form.city}}" data-field="city" bindinput="updateField" placeholder="例如：上海" placeholder-class="field-placeholder" maxlength="30" aria-label="城市" />
-          </view>
-          <view class="field-group">
-            <text class="section-title">👤 性别</text>
-            <view class="gender-options">
-              <button class="option {{form.gender === 'male' ? 'option-selected' : ''}}" hover-class="none" aria-pressed="{{form.gender === 'male'}}" data-gender="male" bindtap="chooseGender">
-                <view class="gender-dot" aria-hidden="true"></view><text>男生</text>
-              </button>
-              <button class="option {{form.gender === 'female' ? 'option-selected' : ''}}" hover-class="none" aria-pressed="{{form.gender === 'female'}}" data-gender="female" bindtap="chooseGender">
-                <view class="gender-dot" aria-hidden="true"></view><text>女生</text>
-              </button>
-            </view>
-          </view>
-          <view class="field-group">
-            <text class="section-title">📝 个人描述</text>
-            <textarea class="field description" value="{{form.description}}" data-field="description" bindinput="updateField" placeholder="例如：经常通勤，喜欢宽松款和平底鞋。" placeholder-class="field-placeholder" maxlength="120" aria-label="个人描述" />
-            <view class="count muted small">{{form.description.length}} / 120</view>
-          </view>
-          <button class="primary profile-action" hover-class="primary-pressed" hover-start-time="0" hover-stay-time="0" bindtap="saveProfile">✓ {{profile ? '保存资料' : '完成设置'}}</button>
-          <button wx:if="{{profile}}" class="cancel" hover-class="none" bindtap="cancelEdit">取消</button>
-        </view>
-      </block>
-      <block wx:else>
-        <view class="panel profile-banner profile-hero">
-          <view class="banner-icon">👤</view>
-          <text class="profile-title">我的穿搭档案</text>
-        </view>
-        <view class="panel profile-panel">
-          <view class="between">
-            <text class="section-title">个人资料</text>
-            <button class="option edit" hover-class="none" bindtap="openProfileForm">✏️ 编辑</button>
-          </view>
-          <view class="profile-row"><text class="profile-icon">📍</text><view class="profile-value"><view class="hint">城市</view><text>{{profile.city}}</text></view></view>
-          <view class="profile-row"><text class="profile-icon">👤</text><view class="profile-value"><view class="hint">性别</view><text>{{profile.gender === 'male' ? '男生' : '女生'}}</text></view></view>
-          <view class="profile-row"><text class="profile-icon">📝</text><view class="profile-value"><view class="hint">个人描述</view><text>{{profile.description}}</text></view></view>
-        </view>
-        <button class="primary profile-action profile-cta" hover-class="primary-pressed" hover-start-time="0" hover-stay-time="0" data-tab="weather" bindtap="switchTab">👕 去选今日穿搭</button>
-      </block>
-    </view>
-  </scroll-view>
-
-  <view class="tab-bar">
-    <button class="tab {{tab === 'weather' ? 'tab-active' : ''}}" hover-class="none" data-tab="weather" bindtap="switchTab"><text class="tab-icon">👕</text><text>OOTD</text></button>
-    <button class="tab {{tab === 'profile' ? 'tab-active' : ''}}" hover-class="none" data-tab="profile" bindtap="switchTab"><text class="tab-icon">👤</text><text>我的</text></button>
-  </view>
+  <template is="tab-bar" data="{{active: 'weather'}}" />
 </view>
 
-<view wx:if="{{result}}" class="popup">
-  <view class="backdrop" bindtap="closeResult"></view>
-  <scroll-view scroll-y class="sheet">
-    <view class="sheet-content">
-      <view class="sheet-handle"></view>
-      <view class="between">
-        <view class="sheet-heading">
-          <view class="sheet-icon">✨</view>
-          <view><view class="profile-title">今日穿搭推荐</view><view class="hint">{{selectedStyle}} · {{weather.sampleCity}} · {{weather.low}}–{{weather.high}}°C</view></view>
-        </view>
-        <view class="round-button" bindtap="closeResult" aria-role="button" aria-label="关闭推荐"><view class="close-icon" aria-hidden="true"></view></view>
-      </view>
-      <view class="advice">
-        <view class="between"><text class="section-title">AI 搭配建议</text><text class="small muted">演示建议</text></view>
-        <view class="advice-text">{{result.text}}</view>
-      </view>
-      <view class="between inspiration"><text class="section-title">穿搭灵感</text><text class="small muted">参考照片 · 左右滑动</text></view>
-      <swiper class="carousel" current="{{slideIndex}}" bindchange="updateSlide" circular>
-        <swiper-item wx:for="{{result.images}}" wx:key="key">
-          <image class="outfit-photo" src="{{item.src}}" mode="aspectFill" aria-label="{{item.caption}}" />
-          <view class="photo-caption">{{item.caption}}</view>
-        </swiper-item>
-      </swiper>
-      <view class="carousel-controls">
-        <view class="round-button carousel-arrow carousel-prev" data-step="-1" bindtap="stepSlide" aria-role="button" aria-label="上一张"><text aria-hidden="true">‹</text></view>
-        <view class="slide-dots">
-          <view wx:for="{{result.images}}" wx:key="key" class="slide-target {{slideIndex === index ? 'slide-target-active' : ''}}" data-slide="{{index}}" bindtap="selectSlide" aria-role="button" aria-label="第 {{index + 1}} 张"><view class="dot"></view></view>
-        </view>
-        <view class="round-button carousel-arrow carousel-next" data-step="1" bindtap="stepSlide" aria-role="button" aria-label="下一张"><text aria-hidden="true">›</text></view>
-      </view>
-    </view>
-  </scroll-view>
-</view>
+<ootd-popup wx:if="{{result}}" result="{{result}}" bind:close="closeResult" />

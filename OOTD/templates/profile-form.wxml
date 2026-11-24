@@ -1,0 +1,46 @@
+<template name="profile-header">
+  <view style="height: {{statusBarHeight}}px"></view>
+  <view class="profile-header" style="height: {{headerHeight}}px">
+    <view class="profile-brand"><image src="/pages/profile/icons/user.svg" mode="aspectFit" aria-hidden="true" /></view>
+    <text>我的</text>
+  </view>
+</template>
+
+<template name="profile-form">
+  <view class="panel profile-banner setup-banner">
+    <view class="banner-copy">
+      <view class="profile-title">{{editing ? '编辑个人资料' : '建立你的穿搭档案'}}</view>
+      <view class="banner-hint">天气按城市展示，穿搭会参考你的风格和日常需求。</view>
+    </view>
+    <view class="profile-orbit" aria-hidden="true"></view>
+    <view class="banner-icon"><image src="/pages/profile/icons/shirt.svg" mode="aspectFit" aria-hidden="true" /></view>
+    <image class="banner-sparkle" src="/pages/profile/icons/sparkle.svg" mode="aspectFit" aria-hidden="true" />
+  </view>
+
+  <form class="panel profile-panel" bindsubmit="saveProfile">
+    <view class="field-group">
+      <view class="field-label"><image src="/pages/profile/icons/location.svg" mode="aspectFit" aria-hidden="true" /><text>城市</text></view>
+      <input class="field" value="{{form.city}}" data-field="city" bindinput="updateField" placeholder="例如：上海" placeholder-class="field-placeholder" maxlength="30" aria-label="城市" />
+    </view>
+    <view class="field-group">
+      <view class="field-label"><image src="/pages/profile/icons/person.svg" mode="aspectFit" aria-hidden="true" /><text>性别</text></view>
+      <view class="gender-options">
+        <view class="option {{form.gender === 'male' ? 'option-selected' : ''}}" data-gender="male" bindtap="chooseGender" aria-role="button" aria-pressed="{{form.gender === 'male'}}">
+          <view class="gender-dot" aria-hidden="true"></view><text>男生</text>
+        </view>
+        <view class="option {{form.gender === 'female' ? 'option-selected' : ''}}" data-gender="female" bindtap="chooseGender" aria-role="button" aria-pressed="{{form.gender === 'female'}}">
+          <view class="gender-dot" aria-hidden="true"></view><text>女生</text>
+        </view>
+      </view>
+    </view>
+    <view class="field-group">
+      <view class="field-label"><image src="/pages/profile/icons/description.svg" mode="aspectFit" aria-hidden="true" /><text>个人描述</text></view>
+      <textarea class="field description" value="{{form.description}}" data-field="description" bindinput="updateField" placeholder="例如：经常通勤，喜欢宽松款和平底鞋。" placeholder-class="field-placeholder" maxlength="120" aria-label="个人描述" />
+      <view class="count">{{form.description.length}} / 120</view>
+    </view>
+    <button class="primary profile-action" form-type="submit" disabled="{{submitting === true}}" hover-class="primary-pressed" hover-start-time="0" hover-stay-time="0">
+      <image src="/pages/profile/icons/check.svg" mode="aspectFit" aria-hidden="true" /><text>{{editing ? '保存资料' : '完成设置'}}</text>
+    </button>
+    <view wx:if="{{editing}}" class="cancel" bindtap="cancelEdit" aria-role="button">取消</view>
+  </form>
+</template>
